@@ -41,20 +41,42 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
         sheetpath = default_sheet
     sheet = doc.getObject(sheetpath)
 
-    return (sheet, prop_subpath)
+    return (doc, sheet, prop_subpath)
 
 
 
+# wraps acces to FC model via spreadsheet properties
+#    to flat python callable format
+#   input:  model input, i.e. written to sheet, property outside sheet
+#       supposedly a vector i.e. List or tuple
+#   output: model output, i.e. read from sheet, may be property or cell
+#       supposedly a placement
 
 class wrapModel:
 
-    def __init(self, input: str, output: str):
-        # self.input = input
-        # self.output = output
+    def __init(self, input: str, output: str, clen=1):
 
-        self.doc = FreeCAD.ActiveDocument
-        self.inputProperty  = sheet.getPropertyByName(input)
-        self.outputProperty = sheet.getPropertyByName(output)
+        self.idoc, self.iSheet, self.iPropName = parsePropPath(input)
+        self.odoc, self.oSheet, self.oPropName = parsePropPath(output)
+        self.clen = clen # normalize placement to match ~ quaternion components < 1
+
+
+    def callModel(vect_in):
+        # sheet.addProperty('App::PropertyPythonObject', 'D8' )
+        # setattr(sheet, 'D8', propD8)
+        setattr(self.isheet, self.iPropName, vect_in)
+
+        self.idoc.recompute()
+        if self.idoc not == self.odoc:
+            self.odoc.recompute()
+
+        # propD8 = sheet.getPropertyByName('D8')
+        plc  = self.osheet.getPropertyByName(self.oPropName)
+        base = plc.Base
+        rotq = plc.Rotation.Q
+        rv = list(base / self.clen)
+        rv.extend(rotq)
+        return rv
 
 
 
@@ -67,10 +89,7 @@ def solveRevKin(*args):
     doc = FreeCAD.ActiveDocument
 
 
-# propD8 = sheet.getPropertyByName('D8')
-# sheet.addProperty('App::PropertyPythonObject', 'D8' )
-# setattr(sheet, 'D8', propD8)
-# >>> doc.recompute()
+
 # hm .... das geht nicht bzw. bleibt da nicht ....
 # muß wohl aus dem sheet raus....
 
