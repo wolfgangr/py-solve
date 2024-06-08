@@ -12,13 +12,7 @@ def dummy(*args):
     pprint.pprint(args)
 
 
-# # reverse kinematic solver
-# 'solve reverse kinematic placement
-# - target placement
-# - start vector(List)
-# - location to write model input (string of name)
-# - location to read model output (string of name)
-# - characteristic length (scales offsets down to ~ as rot values)
+
 
 # =Unnamed#pySheet.cpy_res_posTip
 def parsePropPath( proppath , default_sheet = 'pySheet'):
@@ -46,39 +40,60 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 
 
 # wraps acces to FC model via spreadsheet properties
-#    to flat python callable format
+#   to flat python callable format
 #   input:  model input, i.e. written to sheet, property outside sheet
 #       supposedly a vector i.e. List or tuple
 #   output: model output, i.e. read from sheet, may be property or cell
 #       supposedly a placement
+#   target: target placement to be substracted (or whatever) since solver
+#       targets to all over zeros
+#  hangon .. can the quaternions be zero at all? better go for euler angles??
 
 class wrapModel:
 
-    def __init(self, input: str, output: str, clen=1):
+    def __init(self, input: str, output: str, target = None, clen=1):
 
-        self.idoc, self.iSheet, self.iPropName = parsePropPath(input)
-        self.odoc, self.oSheet, self.oPropName = parsePropPath(output)
+        self.iDoc, self.iSheet, self.iPropName = parsePropPath(input)
+        self.oDoc, self.oSheet, self.oPropName = parsePropPath(output)
         self.clen = clen # normalize placement to match ~ quaternion components < 1
+
+        if target:  # calc the inverse only once on instantiation
+            self.iTarget = target.inverse()
+        else:       # zero target inverts to itself
+            self.iTarget = FreeCAD.Placement()
+
 
 
     def callModel(vect_in):
         # sheet.addProperty('App::PropertyPythonObject', 'D8' )
         # setattr(sheet, 'D8', propD8)
-        setattr(self.isheet, self.iPropName, vect_in)
+        setattr(self.iSheet, self.iPropName, vect_in)
 
-        self.idoc.recompute()
-        if self.idoc not == self.odoc:
-            self.odoc.recompute()
+        self.iDoc.recompute()
+        if not self.iDoc == self.oDoc:
+            self.oDoc.recompute()
 
         # propD8 = sheet.getPropertyByName('D8')
-        plc  = self.osheet.getPropertyByName(self.oPropName)
-        base = plc.Base
-        rotq = plc.Rotation.Q
+        plc  = self.oSheet.getPropertyByName(self.oPropName)
+
+        ## TBD ---- current.multiply(inverse(target))
+        # solver approaches all zeroes!
+        dPlc = plc.multiply(self.iTarget)
+
+        base = dPlc.Base
+        ypr = dPlc.Rotation.getYawPitchRoll()
         rv = list(base / self.clen)
-        rv.extend(rotq)
+        rv.extend(ypr)
         return rv
 
 
+# # reverse kinematic solver
+# 'solve reverse kinematic placement
+# - target placement
+# - start vector(List)
+# - location to write model input (string of name)
+# - location to read model output (string of name)
+# - characteristic length (scales offsets down to ~ as rot values)
 
 
 def solveRevKin(*args):
@@ -90,6 +105,5 @@ def solveRevKin(*args):
 
 
 
-# hm .... das geht nicht bzw. bleibt da nicht ....
-# muß wohl aus dem sheet raus....
+
 
