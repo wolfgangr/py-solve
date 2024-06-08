@@ -51,7 +51,8 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 
 class wrapModel:
 
-    def __init(self, input: str, output: str, target = None, clen=1):
+    def __init(self, input: str, output: str,
+                target: FreeCAD.Placement = None, clen: float =1 ):
 
         self.iDoc, self.iSheet, self.iPropName = parsePropPath(input)
         self.oDoc, self.oSheet, self.oPropName = parsePropPath(output)
@@ -96,12 +97,16 @@ class wrapModel:
 # - characteristic length (scales offsets down to ~ as rot values)
 
 
-def solveRevKin(*args):
+def solveRevKin(target:FreeCAD.Placement, startVec: list[float],
+                    input: str, output: str, cLen:float = 1):
     # print(args)
-    print("real dummy for reverse kinematic solver")
-    pprint.pprint(args)
+    print("target, startVec, input, output, cLen:")
+    print(target, startVec, input, output, cLen)
+    # pprint.pprint(target, startVec, input, output, cLen)
 
-    doc = FreeCAD.ActiveDocument
+    # doc = FreeCAD.ActiveDocument
+
+    # solutionInfo=fsolve(nonlinearEquation,initialGuess,full_output=1)
 
 
 
