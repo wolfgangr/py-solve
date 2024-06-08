@@ -51,7 +51,7 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 
 class wrapModel:
 
-    def __init(self, input: str, output: str,
+    def __init__(self, input: str, output: str,
                 target: FreeCAD.Placement = None, clen: float =1 ):
 
         self.iDoc, self.iSheet, self.iPropName = parsePropPath(input)
@@ -65,7 +65,7 @@ class wrapModel:
 
 
 
-    def callModel(vect_in):
+    def callModel(self, vect_in):
         # sheet.addProperty('App::PropertyPythonObject', 'D8' )
         # setattr(sheet, 'D8', propD8)
         setattr(self.iSheet, self.iPropName, vect_in)
@@ -102,6 +102,13 @@ def solveRevKin(target:FreeCAD.Placement, startVec: list[float],
     # print(args)
     print("target, startVec, input, output, cLen:")
     print(target, startVec, input, output, cLen)
+
+    model = wrapModel(input, output, target, cLen)
+
+    solutionInfo=fsolve(model.callModel, startVec, full_output=1)
+
+    pprint.pprint(solutionInfo)
+
     # pprint.pprint(target, startVec, input, output, cLen)
 
     # doc = FreeCAD.ActiveDocument
