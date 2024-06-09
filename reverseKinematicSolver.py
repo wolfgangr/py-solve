@@ -128,13 +128,25 @@ def solveRevKin(target:FreeCAD.Placement, startVec: list[float],
 
 # >>> obj.cpy_def_kinSolver
 # ['solveRevKin', '=pySheet.C11', '=pySheet.C8', "'pySheet.cpy_solver_result'", # "'GPattach007.Local_CS009'", '1']
-def runSolverFromShell(obj):
+
+
+
+
+def runSolverFromShell():
+    doc = FreeCAD.ActiveDocument
+    obj = doc.getObject("pySheet")
     solveRevKin(
         obj.evalExpression('pySheet.C11'),
         obj.evalExpression('pySheet.C8'),
         'pySheet.cpy_solver_result',
         'GPattach007.Local_CS009',
         1)
+
+def resetModel():
+    doc = FreeCAD.ActiveDocument
+    obj = doc.getObject("pySheet")
+
+    obj.cpy_solver_result = obj.evalExpression('pySheet.C8')
 
 
 
