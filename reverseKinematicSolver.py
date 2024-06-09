@@ -11,7 +11,12 @@ def dummy(*args):
     print("dummy for reverse kinematic solver")
     pprint.pprint(args)
 
-
+# required if we overload execute()
+def recompute_cells(obj):
+    u_range = obj.getUsedRange()
+    range_str = u_range[0] + ':' + u_range[1]
+    if range_str != '@0:@0':       # if sheet is not empty
+        obj.recomputeCells(range_str)
 
 
 # =Unnamed#pySheet.cpy_res_posTip
@@ -68,14 +73,18 @@ class wrapModel:
     def callModel(self, vect_in):
         # sheet.addProperty('App::PropertyPythonObject', 'D8' )
         # setattr(sheet, 'D8', propD8)
-        setattr(self.iSheet, self.iPropName, vect_in)
+        setattr(self.iSheet, self.iPropName, list(vect_in) )
+
+        recompute_cells(self.iSheet)
 
         self.iDoc.recompute()
         if not self.iDoc == self.oDoc:
             self.oDoc.recompute()
 
         # propD8 = sheet.getPropertyByName('D8')
-        plc  = self.oSheet.getPropertyByName(self.oPropName)
+        # plc  = self.oSheet.getPropertyByName(self.oPropName)
+        # self.oSheet.getSubObject('Local_CS009.', retType=3)
+        plc = self.oSheet.getSubObject(self.oPropName + '.', retType=3)
 
         ## TBD ---- current.multiply(inverse(target))
         # solver approaches all zeroes!
