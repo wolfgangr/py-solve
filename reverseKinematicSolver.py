@@ -93,17 +93,18 @@ class wrapModel:
 # - target placement
 # - start vector(List)
 # - location to write model input (string of name)
-# - location to read model output (string of name)
+# - objcect & link context to read model output plc (string of name)
 # - characteristic length (scales offsets down to ~ as rot values)
 
 
 def solveRevKin(target:FreeCAD.Placement, startVec: list[float],
-                    input: str, output: str, cLen:float = 1):
+                    modelInput: str, modelOutput: str,
+                    cLen:float = 1):
     # print(args)
-    print("target, startVec, input, output, cLen:")
-    print(target, startVec, input, output, cLen)
+    print("target, startVec, modelInput, modelOoutput, cLen:")
+    print(target, startVec, modelInput, modelOutput, cLen)
 
-    model = wrapModel(input, output, target, cLen)
+    model = wrapModel(modelInput, modelOutput, target, cLen)
 
     solutionInfo=fsolve(model.callModel, startVec, full_output=1)
 
