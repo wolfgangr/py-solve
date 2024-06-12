@@ -47,10 +47,12 @@ class rkSolver():
         # access with href() to keep solver out of DAG
         obj.addProperty("App::PropertyPythonObject", "ModelInVector", grp,
             'model input vector as supplied by the solver - read only')
+        obj.setPropertyStatus('ModelInVector', ['ReadOnly', 'Transient', 'Output', 14, 21])
 
         # model out plc
-        obj.addProperty("App::PropertyPythonObject", "ModelOutPlacement", grp,
-            'model input vector as supplied by the solver - read only')
+        obj.addProperty("App::PropertyPlacement", "ModelOutPlacement", grp,
+            'model output placement - for final processing - retrieved by solver code - read only')
+        obj.setPropertyStatus('ModelOutPlacement', ['ReadOnly', 'Transient', 'Output', 14, 21])
 
         # characteristic length (to scale pos rel to normed quaternion)
         obj.addProperty("App::PropertyDistance", "Clen", grp,
