@@ -26,34 +26,34 @@ class rkSolver():
 
         # model in ref: str
         # e.g 'spreadsheetFooBar'
-        obj.addProperty("App::PropertyString", "Model_in_object", grp,
+        obj.addProperty("App::PropertyString", "ModelInRef", grp,
             'the sheet ( or whatsever) that href(reads) model input and gets touched to start recompute')
 
         # model out ref: str
         # the context&object to get target placement from; e.g. 'GPattach007.Local_CS009'
-        obj.addProperty("App::PropertyString", "Model_in_object", grp,
+        obj.addProperty("App::PropertyString", "ModelOutRef", grp,
             'the context&object to get target placement from; e.g Part_foo.LCS_bar')
 
 
         # target plc
-        obj.addProperty("App::PropertyPlacement", "Target_Placement", grp,
+        obj.addProperty("App::PropertyPlacement", "TargetPlacement", grp,
             'the placement of model tip where it should be moved to by the solver')
 
         # start vector
-        obj.addProperty("App::PropertyPythonObject", "Start_Vector", grp,
+        obj.addProperty("App::PropertyPythonObject", "StartVector", grp,
             'initial Value of model input for the solver to start')
 
         # model in vector
         # access with href() to keep solver out of DAG
-        obj.addProperty("App::PropertyPythonObject", "Model_in_Vector", grp,
+        obj.addProperty("App::PropertyPythonObject", "ModelInVector", grp,
             'model input vector as supplied by the solver - read only')
 
         # model out plc
-        obj.addProperty("App::PropertyPythonObject", "Model_in_Vector", grp,
+        obj.addProperty("App::PropertyPythonObject", "ModelOutPlacement", grp,
             'model input vector as supplied by the solver - read only')
 
         # characteristic length (to scale pos rel to normed quaternion)
-        obj.addProperty("App::PropertyDistance", "clen", grp,
+        obj.addProperty("App::PropertyDistance", "Clen", grp,
             'characteristic dimension of the target property to align scaling to 0...1 as of rot quaternion components')
 
         # ============~~~~~~~–-------------------------
