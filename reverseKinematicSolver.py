@@ -147,6 +147,7 @@ def resetModel():
     obj = doc.getObject("pySheet")
 
     obj.cpy_solver_result = obj.evalExpression('pySheet.C8')
+    doc.recompute()
 
 
 

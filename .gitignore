@@ -1,2 +1,5 @@
 *.FCBak
 cardan_actuator_model_V00?.FCStd
+cardan_actuator_modelv010.FCStd.crashed
+test/
+
