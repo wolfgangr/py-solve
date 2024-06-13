@@ -199,7 +199,17 @@ class rkSolver():
             'characteristic dimension of the target property to align scaling to 0...1 as of rot quaternion components')
         setattr(obj, "Clen", '100 mm')
 
+        # set model in to start vector
+        self.resetModel(obj)
         # ============~~~~~~~–-------------------------
+
+
+    # set model in to start vector independent of solver
+    # to be called at init, restore, change, non-solivng execute
+    def resetModel(self, obj):
+        plc = obj.StartVector
+        setattr(obj, 'ModelInVector', plc)
+
 
 
     # def onChanged(self, obj, prop):
@@ -213,6 +223,7 @@ class rkSolver():
 
     def onDocumentRestored(self, obj):
         obj.Proxy = self
+        self.resetModel(obj)
         # self.execute(obj)
         # pass
 
