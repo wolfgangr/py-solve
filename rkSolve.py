@@ -104,7 +104,8 @@ class wrapModel:
 
         plc = self.oObj.getSubObject(self.oPropName + '.', retType=3)
         # for debugging and final result - maybe move out later?
-        setattr(self.solvBase, outProp,  plc )
+        ## ================================~~~~~~~~~~~~~~~~~~~~~~~~~~--------------------------------------
+        setattr(self.solvBase, self.outProp,  plc )
         stratPlc = stratifyPlacement(plc, self.clen)
         # perform vector like substraction on lists
         # rv = [ i2 - i1  for i1, i2 in zip (stratPlc, self.stratTarget) ]
