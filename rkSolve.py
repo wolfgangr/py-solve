@@ -91,10 +91,10 @@ class wrapModel:
         # # if not self.iDoc == self.oDoc:
         # #     self.oDoc.recompute()
 
-        # propD8 = sheet.getPropertyByName('D8')
-        # plc  = self.oSheet.getPropertyByName(self.oPropName)
-        # self.oSheet.getSubObject('Local_CS009.', retType=3)
+
         plc = self.oSheet.getSubObject(self.oPropName + '.', retType=3)
+        # for debugging and final result - maybe move out later?
+        setattr(self.solvBase, outProp,  plc )
 
         ## TBD ---- current.multiply(inverse(target))
         # solver approaches all zeroes!
