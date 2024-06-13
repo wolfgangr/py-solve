@@ -57,8 +57,8 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 class wrapModel:
 
     def __init__(self,
-                input:  str, inprop:  str,
-                output: str, outprop: str,
+                input:  str='', inprop:  str='',
+                output: str='', outprop: str='',
                 target: FreeCAD.Placement = None,
                 clen: float =1 ):
 
@@ -144,7 +144,8 @@ def create_rkSolver(obj_name = 'pySolver'):
     """
 
     obj = FreeCAD.ActiveDocument.addObject('App::FeaturePython', obj_name)
-    rkSolve.rkSolver(obj)
+    # rkSolve.rkSolver(obj)
+    rkSolver(obj)
 
     # App.ActiveDocument.recompute()
     return obj
@@ -229,12 +230,12 @@ class rkSolver():
             #             clen: float =1 ):
 
         model = wrapModel(
-                obj.ModelInRef,
-                obj.ModelInVector,
-                obj.ModelOutRef,
-                obj.ModelOutPlacement,
-                obj.TargetPlacement,
-                obj.Clen
+                input   =  obj.ModelInRef,
+                inprop  = 'ModelInVector',            # obj.ModelInVector,
+                output  =  obj.ModelOutRef,
+                outprop = 'ModelOutPlacement',       # obj.ModelOutPlacement,
+                target  =  obj.TargetPlacement,
+                clen    =  obj.Clen
             )
 
         startVec = obj.StartVector
