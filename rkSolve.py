@@ -232,6 +232,8 @@ class rkSolver():
         Called on document recompute
         """
         print('Recomputing {0:s} ({1:s})'.format(obj.Name, self.Type))
+        return None
+
         #
 
             # def __init__(self,
