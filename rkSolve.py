@@ -91,7 +91,7 @@ class wrapModel:
         # sheet.addProperty('App::PropertyPythonObject', 'D8' )
         # setattr(sheet, 'D8', propD8)
         # setattr(self.iSheet, self.iPropName, list(vect_in) )
-        setattr(self.solvBase, inProp,  list(vect_in) )
+        setattr(self.solvBase, self.inProp,  list(vect_in) )
 
         self.iObj.touch()
         self.oDoc.recompute([self.oObj])
@@ -102,7 +102,7 @@ class wrapModel:
         # #     self.oDoc.recompute()
 
 
-        plc = self.oSheet.getSubObject(self.oPropName + '.', retType=3)
+        plc = self.oObj.getSubObject(self.oPropName + '.', retType=3)
         # for debugging and final result - maybe move out later?
         setattr(self.solvBase, outProp,  plc )
         stratPlc = stratifyPlacement(plc, self.clen)
