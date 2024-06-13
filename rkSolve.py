@@ -12,17 +12,13 @@ from scipy.optimize import fsolve
 import pprint
 import re
 
-def dummy(*args):
-    # print(args)
-    print("dummy for reverse kinematic solver")
-    pprint.pprint(args)
 
-# required if we overload execute()
-def recompute_cells(obj):
-    u_range = obj.getUsedRange()
-    range_str = u_range[0] + ':' + u_range[1]
-    if range_str != '@0:@0':       # if sheet is not empty
-        obj.recomputeCells(range_str)
+# # required if we overload execute()
+# def recompute_cells(obj):
+#     u_range = obj.getUsedRange()
+#     range_str = u_range[0] + ':' + u_range[1]
+#     if range_str != '@0:@0':       # if sheet is not empty
+#         obj.recomputeCells(range_str)
 
 
 # =Unnamed#pySheet.cpy_res_posTip
@@ -60,17 +56,23 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 
 class wrapModel:
 
-    def __init__(self, input: str, output: str,
-                target: FreeCAD.Placement = None, clen: float =1 ):
+    def __init__(self,
+                input:  str, inprop:  str,
+                output: str, outprop: str,
+                target: FreeCAD.Placement = None,
+                clen: float =1 ):
 
-        self.iDoc, self.iSheet, self.iPropName = parsePropPath(input)
-        self.oDoc, self.oSheet, self.oPropName = parsePropPath(output)
+        self.iDoc, self.iObj, self.iPropName = parsePropPath(input)
+        self.oDoc, self.oObj, self.oPropName = parsePropPath(output)
+        self.inProp  = inprop
+        self.outProp = outprop
+        self.target = target
         self.clen = clen # normalize placement to match ~ quaternion components < 1
 
-        if target:  # calc the inverse only once on instantiation
-            self.iTarget = target.inverse()
-        else:       # zero target inverts to itself
-            self.iTarget = FreeCAD.Placement()
+        # if target:  # calc the inverse only once on instantiation
+        #     self.iTarget = target.inverse()
+        # else:       # zero target inverts to itself
+        #     self.iTarget = FreeCAD.Placement()
 
 
 
@@ -111,24 +113,24 @@ class wrapModel:
 # - characteristic length (scales offsets down to ~ as rot values)
 
 
-def solveRevKin(target:FreeCAD.Placement, startVec: list[float],
-                    modelInput: str, modelOutput: str,
-                    cLen:float = 1):
-    # print(args)
-    print("target, startVec, modelInput, modelOoutput, cLen:")
-    print(target, startVec, modelInput, modelOutput, cLen)
-
-    model = wrapModel(modelInput, modelOutput, target, cLen)
-
-    solutionInfo=fsolve(model.callModel, startVec, full_output=1)
-
-    pprint.pprint(solutionInfo)
-
-    # pprint.pprint(target, startVec, input, output, cLen)
-
-    # doc = FreeCAD.ActiveDocument
-
-    # solutionInfo=fsolve(nonlinearEquation,initialGuess,full_output=1)
+    # def solveRevKin(target:FreeCAD.Placement, startVec: list[float],
+    #                     modelInput: str, modelOutput: str,
+    #                     cLen:float = 1):
+    #     # print(args)
+    #     print("target, startVec, modelInput, modelOutput, cLen:")
+    #     print(target, startVec, modelInput, modelOutput, cLen)
+    #
+    #     model = wrapModel(modelInput, modelOutput, target, cLen)
+    #
+    #     solutionInfo=fsolve(model.callModel, startVec, full_output=1)
+    #
+    #     pprint.pprint(solutionInfo)
+    #
+    #     # pprint.pprint(target, startVec, input, output, cLen)
+    #
+    #     # doc = FreeCAD.ActiveDocument
+    #
+    #     # solutionInfo=fsolve(nonlinearEquation,initialGuess,full_output=1)
 
 
 # >>> obj.cpy_def_kinSolver
@@ -219,4 +221,24 @@ class rkSolver():
         """
         print('Recomputing {0:s} ({1:s})'.format(obj.Name, self.Type))
         #
+
+            # def __init__(self,
+            #             input:  str, inprop:  str,
+            #             output: str, outprop: str,
+            #             target: FreeCAD.Placement = None,
+            #             clen: float =1 ):
+
+        model = wrapModel(
+                obj.ModelInRef,
+                obj.ModelInVector,
+                obj.ModelOutRef,
+                obj.ModelOutPlacement,
+                obj.TargetPlacement,
+                obj.Clen
+            )
+
+        startVec = obj.StartVector
+
+        solutionInfo=fsolve(model.callModel, startVec, full_output=1)
+        pprint.pprint(solutionInfo)
 
