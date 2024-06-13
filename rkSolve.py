@@ -284,8 +284,8 @@ class rkSolver():
 
         startVec = obj.StartVector
 
-        # solutionInfo=fsolve(model.callModel, startVec, full_output=1)
-        # pprint.pprint(solutionInfo)
+        solutionInfo=fsolve(model.callModel, startVec, full_output=1)
+        pprint.pprint(solutionInfo)
 
         if not getattr(obj, "solve_cont", None):
             setattr(obj, "solve_now", False)
