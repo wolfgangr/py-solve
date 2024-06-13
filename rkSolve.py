@@ -162,7 +162,7 @@ class rkSolver():
 
 
         # properties
-        grp = 'solver'
+        grp = 'solverConfig'
 
         # model in ref: str
         # e.g 'spreadsheetFooBar'
@@ -183,6 +183,12 @@ class rkSolver():
         obj.addProperty("App::PropertyPythonObject", "StartVector", grp,
             'initial Value of model input for the solver to start')
 
+        # characteristic length (to scale pos rel to normed quaternion)
+        obj.addProperty("App::PropertyDistance", "Clen", grp,
+            'characteristic dimension of the target property to align scaling to 0...1 as of rot quaternion components')
+        setattr(obj, "Clen", '100 mm')
+
+        grp = 'solverOut'
         # model in vector
         # access with href() to keep solver out of DAG
         obj.addProperty("App::PropertyPythonObject", "ModelInVector", grp,
@@ -194,10 +200,13 @@ class rkSolver():
             'model output placement - for final processing - retrieved by solver code - read only')
         obj.setPropertyStatus('ModelOutPlacement', ['ReadOnly', 'Transient', 'Output', 14, 21])
 
-        # characteristic length (to scale pos rel to normed quaternion)
-        obj.addProperty("App::PropertyDistance", "Clen", grp,
-            'characteristic dimension of the target property to align scaling to 0...1 as of rot quaternion components')
-        setattr(obj, "Clen", '100 mm')
+        # execute control flags
+        grp = 'solverControl'
+        obj.addProperty("App::PropertyBool", "solve_now", grp,
+            "set true to run solver once on execute if solve_cont=False; 'armed/disarmed' for 'cont'")
+
+        obj.addProperty("App::PropertyBool", "solve_cont", grp,
+            "set true for continous solving on everey recompute, masked by disarmed")
 
         # set model in to start vector
         self.resetModel(obj)
@@ -232,7 +241,9 @@ class rkSolver():
         Called on document recompute
         """
         print('Recomputing {0:s} ({1:s})'.format(obj.Name, self.Type))
-        return None
+
+        if not getattr(obj, "solve_now", None):
+            return None
 
         #
 
@@ -253,6 +264,10 @@ class rkSolver():
 
         startVec = obj.StartVector
 
-        solutionInfo=fsolve(model.callModel, startVec, full_output=1)
-        pprint.pprint(solutionInfo)
+        # solutionInfo=fsolve(model.callModel, startVec, full_output=1)
+        # pprint.pprint(solutionInfo)
+
+        if not getattr(obj, "solve_cont", None):
+            setattr(obj, "solve_now", False)
+
 
