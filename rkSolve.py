@@ -56,12 +56,13 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 
 class wrapModel:
 
-    def __init__(self,
+    def __init__(self, solvBase = None,
                 input:  str='', inprop:  str='',
                 output: str='', outprop: str='',
                 target: FreeCAD.Placement = None,
                 clen: float =1 ):
 
+        self.solvBase = solvBase
         self.iDoc, self.iObj, self.iPropName = parsePropPath(input)
         self.oDoc, self.oObj, self.oPropName = parsePropPath(output)
         self.inProp  = inprop
@@ -79,13 +80,16 @@ class wrapModel:
     def callModel(self, vect_in):
         # sheet.addProperty('App::PropertyPythonObject', 'D8' )
         # setattr(sheet, 'D8', propD8)
-        setattr(self.iSheet, self.iPropName, list(vect_in) )
+        # setattr(self.iSheet, self.iPropName, list(vect_in) )
+        setattr(self.solvBase, inProp,  list(vect_in) )
 
-        recompute_cells(self.iSheet)
-
-        self.iDoc.recompute()
-        if not self.iDoc == self.oDoc:
-            self.oDoc.recompute()
+        self.iObj.touch()
+        self.oDoc.recompute([self.oObj])
+        # # recompute_cells(self.iSheet)
+        # #
+        # # self.iDoc.recompute()
+        # # if not self.iDoc == self.oDoc:
+        # #     self.oDoc.recompute()
 
         # propD8 = sheet.getPropertyByName('D8')
         # plc  = self.oSheet.getPropertyByName(self.oPropName)
@@ -254,6 +258,7 @@ class rkSolver():
             #             clen: float =1 ):
 
         model = wrapModel(
+                solvBase = obj,
                 input   =  obj.ModelInRef,
                 inprop  = 'ModelInVector',            # obj.ModelInVector,
                 output  =  obj.ModelOutRef,
