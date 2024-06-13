@@ -59,7 +59,8 @@ def stratifyPlacement(plc: FreeCAD.Placement, clen=1):
     rotQ  = plc.Rotation.Q      # normed quaternion
     rv   = list(base / clen)
     rv.extend(list(rotQ))
-    return rv
+    rv_ary = np.array(rv)
+    return rv_ary
 
 class wrapModel:
 
@@ -106,7 +107,8 @@ class wrapModel:
         setattr(self.solvBase, outProp,  plc )
         stratPlc = stratifyPlacement(plc, self.clen)
         # perform vector like substraction on lists
-        rv = [ i2 - i1  for i1, i2 in zip (stratPlc, self.stratTarget) ]
+        # rv = [ i2 - i1  for i1, i2 in zip (stratPlc, self.stratTarget) ]
+        rv_ary = np.subtract(stratPlc, self.stratTarget)
 
 
         ## TBD ---- current.multiply(inverse(target))
@@ -117,7 +119,7 @@ class wrapModel:
         # # ypr = dPlc.Rotation.getYawPitchRoll()
         # # rv = list(base / self.clen)
         # # rv.extend(ypr)
-        return rv
+        return rv_ary
 
 ## this was old solver to be attached to pySheet
 
