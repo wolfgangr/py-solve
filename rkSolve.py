@@ -54,6 +54,13 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 #       targets to all over zeros
 #  hangon .. can the quaternions be zero at all? better go for euler angles??
 
+def stratifyPlacement(plc: FreeCAD.Placement, clen=1):
+    base = plc.Base
+    rotQ  = plc.Rotation.Q      # normed quaternion
+    rv   = list(base / clen)
+    rv.extend(list(rotQ))
+    return rv
+
 class wrapModel:
 
     def __init__(self, solvBase = None,
@@ -67,13 +74,15 @@ class wrapModel:
         self.oDoc, self.oObj, self.oPropName = parsePropPath(output)
         self.inProp  = inprop
         self.outProp = outprop
-        self.target = target
+
         self.clen = clen # normalize placement to match ~ quaternion components < 1
 
-        # if target:  # calc the inverse only once on instantiation
-        #     self.iTarget = target.inverse()
-        # else:       # zero target inverts to itself
-        #     self.iTarget = FreeCAD.Placement()
+        if target:
+            self.target = target
+        else:
+            self.target = FreeCAD.Placement()
+
+        self.stratTarget = stratifyPlacement(target, self.clen)
 
 
 
@@ -95,15 +104,19 @@ class wrapModel:
         plc = self.oSheet.getSubObject(self.oPropName + '.', retType=3)
         # for debugging and final result - maybe move out later?
         setattr(self.solvBase, outProp,  plc )
+        stratPlc = stratifyPlacement(plc, self.clen)
+        # perform vector like substraction on lists
+        rv = [ i2 - i1  for i1, i2 in zip (stratPlc, self.stratTarget) ]
+
 
         ## TBD ---- current.multiply(inverse(target))
         # solver approaches all zeroes!
-        dPlc = plc.multiply(self.iTarget)
-
-        base = dPlc.Base
-        ypr = dPlc.Rotation.getYawPitchRoll()
-        rv = list(base / self.clen)
-        rv.extend(ypr)
+        # # dPlc = plc.multiply(self.iTarget)
+        # #
+        # # base = dPlc.Base
+        # # ypr = dPlc.Rotation.getYawPitchRoll()
+        # # rv = list(base / self.clen)
+        # # rv.extend(ypr)
         return rv
 
 ## this was old solver to be attached to pySheet
