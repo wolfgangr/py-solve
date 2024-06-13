@@ -143,7 +143,7 @@ def create_rkSolver(obj_name = 'pySolver'):
     bare FeaturePython with attached solver for reverse kinematic problem
     """
 
-    obj = App.ActiveDocument.addObject('App::FeaturePython', obj_name)
+    obj = FreeCAD.ActiveDocument.addObject('App::FeaturePython', obj_name)
     rkSolve.rkSolver(obj)
 
     # App.ActiveDocument.recompute()
