@@ -14,11 +14,11 @@ import re
 
 
 # # required if we overload execute()
-# def recompute_cells(obj):
-#     u_range = obj.getUsedRange()
-#     range_str = u_range[0] + ':' + u_range[1]
-#     if range_str != '@0:@0':       # if sheet is not empty
-#         obj.recomputeCells(range_str)
+def recompute_cells(obj):
+    u_range = obj.getUsedRange()
+    range_str = u_range[0] + ':' + u_range[1]
+    if range_str != '@0:@0':       # if sheet is not empty
+        obj.recomputeCells(range_str)
 
 
 # =Unnamed#pySheet.cpy_res_posTip
