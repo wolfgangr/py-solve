@@ -93,6 +93,7 @@ class wrapModel:
         # sheet.addProperty('App::PropertyPythonObject', 'D8' )
         # setattr(sheet, 'D8', propD8)
         # setattr(self.iSheet, self.iPropName, list(vect_in) )
+        print  (list(vect_in))
         setattr(self.solvBase, self.inProp,  list(vect_in) )
 
         self.iObj.touch()
@@ -113,6 +114,7 @@ class wrapModel:
         # perform vector like substraction on lists
         # rv = [ i2 - i1  for i1, i2 in zip (stratPlc, self.stratTarget) ]
         rv_ary = np.subtract(stratPlc, self.stratTarget)
+        print(list(rv_ary))
 
 
         ## TBD ---- current.multiply(inverse(target))
