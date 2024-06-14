@@ -56,9 +56,11 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 
 def stratifyPlacement(plc: FreeCAD.Placement, clen=1):
     base = plc.Base
-    rotQ  = plc.Rotation.Q      # normed quaternion
+    # rotQ  = plc.Rotation.Q      # normed quaternion
+    ypr = plc.Rotation.getYawPitchRoll()
     rv   = list(base / clen)
-    rv.extend(list(rotQ))
+    # rv.extend(list(rotQ))
+    rv.extend(list(ypr))
     rv_ary = np.array(rv)
     return rv_ary
 
