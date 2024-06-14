@@ -98,7 +98,9 @@ class wrapModel:
 
         self.iObj.touch()
         recompute_cells(self.iObj)
+        recompute_cells(self.iObj)
         self.oDoc.recompute([self.oObj])
+        self.oDoc.recompute()
         # # recompute_cells(self.iSheet)
         # #
         # # self.iDoc.recompute()
