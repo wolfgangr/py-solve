@@ -95,9 +95,12 @@ class wrapModel:
         # setattr(self.iSheet, self.iPropName, list(vect_in) )
         print  (list(vect_in))
         setattr(self.solvBase, self.inProp,  list(vect_in) )
+        setattr(self.iObj, self.iPropName,  list(vect_in) )
 
         self.iObj.touch()
-        recompute_cells(self.iObj)
+
+        # recompute_cells(self.iObj)
+        # self.iObj.recomputeCells(self.iPropName)
         recompute_cells(self.iObj)
         self.oDoc.recompute([self.oObj])
         self.oDoc.recompute()
