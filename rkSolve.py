@@ -214,8 +214,13 @@ class rkSolver():
     # set model in to start vector independent of solver
     # to be called at init, restore, change, non-solivng execute
     def resetModel(self, obj):
-        plc = obj.StartVector
-        setattr(obj, 'ModelInVector', plc)
+        vec = obj.StartVector
+        setattr(obj, 'ModelInVector', vec)
+
+    def updateStartVec(self, obj):
+        vec = obj.ModelInVector
+        setattr(obj, 'StartVector', vec)
+
 
     # def onChanged(self, obj, prop):
 
