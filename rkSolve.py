@@ -44,15 +44,6 @@ def parsePropPath( proppath , default_sheet = 'pySheet'):
 
     return (doc, sheet, prop_subpath)
 
-# wraps acces to FC model via spreadsheet properties
-#   to flat python callable format
-#   input:  model input, i.e. written to sheet, property outside sheet
-#       supposedly a vector i.e. List or tuple
-#   output: model output, i.e. read from sheet, may be property or cell
-#       supposedly a placement
-#   target: target placement to be substracted (or whatever) since solver
-#       targets to all over zeros
-#  hangon .. can the quaternions be zero at all? better go for euler angles??
 
 def stratifyPlacement(plc: FreeCAD.Placement, clen=1):
     base = plc.Base
@@ -63,6 +54,16 @@ def stratifyPlacement(plc: FreeCAD.Placement, clen=1):
     rv.extend(list(ypr))
     rv_ary = np.array(rv)
     return rv_ary
+
+# wraps acces to FC model via spreadsheet properties
+#   to flat python callable format
+#   input:  model input, i.e. written to sheet, property outside sheet
+#       supposedly a vector i.e. List or tuple
+#   output: model output, i.e. read from sheet, may be property or cell
+#       supposedly a placement
+#   target: target placement to be substracted (or whatever) since solver
+#       targets to all over zeros
+#  hangon .. can the quaternions be zero at all? better go for euler angles??
 
 class wrapModel:
 
@@ -132,39 +133,8 @@ class wrapModel:
         # # rv.extend(ypr)
         return rv_ary
 
-## this was old solver to be attached to pySheet
-
-# # reverse kinematic solver
-# 'solve reverse kinematic placement
-# - target placement
-# - start vector(List)
-# - location to write model input (string of name)
-# - objcect & link context to read model output plc (string of name)
-# - characteristic length (scales offsets down to ~ as rot values)
 
 
-    # def solveRevKin(target:FreeCAD.Placement, startVec: list[float],
-    #                     modelInput: str, modelOutput: str,
-    #                     cLen:float = 1):
-    #     # print(args)
-    #     print("target, startVec, modelInput, modelOutput, cLen:")
-    #     print(target, startVec, modelInput, modelOutput, cLen)
-    #
-    #     model = wrapModel(modelInput, modelOutput, target, cLen)
-    #
-    #     solutionInfo=fsolve(model.callModel, startVec, full_output=1)
-    #
-    #     pprint.pprint(solutionInfo)
-    #
-    #     # pprint.pprint(target, startVec, input, output, cLen)
-    #
-    #     # doc = FreeCAD.ActiveDocument
-    #
-    #     # solutionInfo=fsolve(nonlinearEquation,initialGuess,full_output=1)
-
-
-# >>> obj.cpy_def_kinSolver
-# ['solveRevKin', '=pySheet.C11', '=pySheet.C8', "'pySheet.cpy_solver_result'", # "'GPattach007.Local_CS009'", '1']
 
 ## bare FPO w/ driving solver
 
@@ -195,12 +165,10 @@ class rkSolver():
         grp = 'solverConfig'
 
         # model in ref: str
-        # e.g 'spreadsheetFooBar'
         obj.addProperty("App::PropertyString", "ModelInRef", grp,
             'the sheet ( or whatsever) that href(reads) model input and gets touched to start recompute')
 
         # model out ref: str
-        # the context&object to get target placement from; e.g. 'GPattach007.Local_CS009'
         obj.addProperty("App::PropertyString", "ModelOutRef", grp,
             'the context&object to get target placement from; e.g Part_foo.LCS_bar')
 
@@ -249,16 +217,7 @@ class rkSolver():
         plc = obj.StartVector
         setattr(obj, 'ModelInVector', plc)
 
-
-
     # def onChanged(self, obj, prop):
-    #     # self.execute(obj) # triggers endless recalc loop
-    #     try:
-    #         # prints "<App> Document.cpp(2705): Recursive calling of recompute"
-    #         # but result looks fine
-    #         App.ActiveDocument.recompute()
-    #     except:
-    #         print('App.ActiveDocument.recompute() failed')
 
     def onDocumentRestored(self, obj):
         obj.Proxy = self
@@ -274,8 +233,6 @@ class rkSolver():
 
         if not getattr(obj, "solve_now", None):
             return None
-
-        #
 
             # def __init__(self,
             #             input:  str, inprop:  str,
